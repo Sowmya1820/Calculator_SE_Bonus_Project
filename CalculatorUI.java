@@ -1,7 +1,8 @@
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.*;
 
-public class CalculatorUI {
+public class CalculatorUI implements ActionListener {
 
     JFrame frame;
     JTextField textField;
@@ -10,6 +11,8 @@ public class CalculatorUI {
     JButton[] functionButtons = new JButton[12];
     JButton addButton, subButton, mulButton, divButton, modButton;
     JButton decButton, equButton, clrButton, delButton, negButton, sqrtButton, logButton;
+
+    boolean isResultDisplayed = false; // Flag to track if the result is displayed
 
     CalculatorUI() {
         // Create the frame
@@ -48,12 +51,14 @@ public class CalculatorUI {
         // Configure function buttons
         for (JButton button : functionButtons) {
             button.setFont(new Font("Arial", Font.BOLD, 18));
+            button.addActionListener(this);
         }
 
         // Initialize number buttons
         for (int i = 0; i < 10; i++) {
             numberButtons[i] = new JButton(String.valueOf(i));
             numberButtons[i].setFont(new Font("Arial", Font.BOLD, 18));
+            numberButtons[i].addActionListener(this);
         }
 
         // Configure panel
@@ -90,6 +95,31 @@ public class CalculatorUI {
 
         // Make the frame visible
         frame.setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        for (int i = 0; i < 10; i++) {
+            if (e.getSource() == numberButtons[i]) {
+                if (isResultDisplayed) {
+                    textField.setText(""); // Clear screen if a result was displayed
+                    isResultDisplayed = false;
+                }
+                if (textField.getText().length() < 8) { // Limit to 8 digits
+                    textField.setText(textField.getText() + i);
+                }
+            }
+        }
+
+        if (e.getSource() == decButton) {
+            if (isResultDisplayed) {
+                textField.setText(""); // Clear screen if a result was displayed
+                isResultDisplayed = false;
+            }
+            if (!textField.getText().contains(".")) {
+                textField.setText(textField.getText() + ".");
+            }
+        }
     }
 
     public static void main(String[] args) {
